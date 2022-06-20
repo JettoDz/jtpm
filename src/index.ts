@@ -1,34 +1,31 @@
 import express from 'express';
-import { Tedis } from 'tedis';
-import { getRandom, encode, format } from './util.js';
+import * as utils from './utilities/util.js';
+import * as services from './service.js';
+import * as responses from './default_responses/responses.js';
 
 const app = express();
 app.use(express.json());
-// const tedis = new Tedis();
 
 app.listen(3000, () => { console.log('listening on port 3000'); });
 
-// http://localhost:3000/test
-app.get('/test', async (req, res) => {
-    let p = encode(getRandom());
-    res.send({ 'res': format(await p) });
+/**
+ * Testing endpoint.
+ */
+app.get('/test', async (req: express.Request, res: express.Response) => {
+    let p = utils.encode(utils.getRandom());
+    res.send({ 'res': utils.format(await p) });
 })
 
-app.post('/get', async (req, res) => {
-    let p = req.body;
-    if (p !== undefined && p.toString().length > 0) {
-        if (p.tkn !== 'testing') {
-            res.status(403).json('Invalid token');
-            return;
+app.get('/get', async (req: express.Request, res: express.Response) => {
+    let param = req.query;
+    let headers = req.headers;
+    if (headers.origin !== undefined) {
+        if (headers.origin.toString() !== 'test') {
+            responses.invalidToken(res);
         } else {
-            res.json(JSON.parse(`{"${p.qry}" : "${format(await encode(getRandom()))}"}`));
+            services.getPassword(param, res);
         }
     } else {
-        res.status(400).json('Bad request')
+        responses.badRequest(res);
     }
 });
-
-// await tedis.get("asdf").catch(() => console.log('rejected'));
-// let result = await tedis.get('random');
-// console.log(result);
-// console.log(await tedis.exists('qwerty'));

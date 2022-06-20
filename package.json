@@ -21,7 +21,6 @@
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.0.1",
-    "express": "^4.18.1",
-    "tedis": "^0.1.12"
+    "express": "^4.18.1"
   }
 }

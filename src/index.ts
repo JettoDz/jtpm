@@ -23,9 +23,7 @@ app.get('/get', async (req: express.Request, res: express.Response) => {
         if (headers.origin.toString() !== 'test') {
             responses.invalidToken(res);
         } else {
-            // if (param.with === undefined) 
             services.getResponse(param, res);
-            // else services.getPassword(param, res);
         }
     } else {
         responses.badRequest(res);

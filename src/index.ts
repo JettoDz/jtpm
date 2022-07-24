@@ -23,9 +23,24 @@ app.get('/get', async (req: express.Request, res: express.Response) => {
         if (headers.origin.toString() !== 'test') {
             responses.invalidToken(res);
         } else {
-            services.getPassword(param, res);
+            // if (param.with === undefined) 
+            services.getResponse(param, res);
+            // else services.getPassword(param, res);
         }
     } else {
         responses.badRequest(res);
     }
 });
+
+app.post('/new', async (req: express.Request, res: express.Response) => {
+    let headers = req.headers;
+    if (headers.origin !== undefined) {
+        if (headers.origin.toString() !== 'test') {
+            responses.invalidToken(res);
+        } else {
+            services.newAccount(req.body, res);
+        }
+    } else {
+        responses.badRequest(res);
+    }
+})

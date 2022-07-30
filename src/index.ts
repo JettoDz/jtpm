@@ -1,4 +1,5 @@
 import express from 'express';
+import env from './utilities/Global.js';
 import * as utils from './utilities/util.js';
 import * as services from './service.js';
 import * as responses from './default_responses/responses.js';
@@ -6,13 +7,13 @@ import * as responses from './default_responses/responses.js';
 const app = express();
 app.use(express.json());
 
-app.listen(3000, () => console.log('listening on port 3000'));
+app.listen(3000, () => env.setKey());
 
 /**
  * Testing endpoint.
  */
 app.get('/test', async (req: express.Request, res: express.Response) => {
-    let p = utils.encode(utils.getRandom());
+    let p = utils.hash(utils.getRandom());
     res.send({ 'res': utils.format(await p) });
 })
 

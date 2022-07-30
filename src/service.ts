@@ -10,7 +10,7 @@ let dict: Array<Holder> = [new Holder('github','myAccount','4gh'),
                            new Holder('reddit','kittenPicture007','4rdd')];
 
 export async function getPassword(query: any, res: Response): Promise<Response<any, Record<string, any>>> {
-    return res.json(JSON.parse(`{'${query.for}' : '${utils.format(await utils.encode(utils.getRandom()))}'}`));
+    return res.json(JSON.parse(`{'${query.for}' : '${utils.format(await utils.hash(utils.getRandom()))}'}`));
 }
 
 export async function getResponse(query: any, res: Response): Promise<Response<any, Record<string, any>>> {

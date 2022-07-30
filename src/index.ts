@@ -24,14 +24,9 @@ app.get('/test', async (req: express.Request, res: express.Response) => {
  * It will also fail on empty filters. The returned password will be encrypted, so the receiver/client
  * side app must decrypt the actual password... although you might just use that as it is. not recommended tho
  */
-app.get('/get', async (req: express.Request, res: express.Response) => {
-    let param = req.query;
-    let errorFunction = checkValidHeaders(req.headers);
-    if (errorFunction === undefined) 
-        services.getResponse(param, res);
-    else 
-        errorFunction.apply(res);
-})
+app.get('/get', async (req: express.Request, res: express.Response) => 
+    proceed(res, checkValidHeaders(req.headers), services.getResponse, req.query, res)
+)
 
 /**
  * Creates new credential holder for the given site and account name passed in the body. Will fail
@@ -39,13 +34,23 @@ app.get('/get', async (req: express.Request, res: express.Response) => {
  * different status. I don't know if it should retrieve the original record. 
  * For a new record, it will respond with the new card, including encrypted password.
  */
-app.post('/new', async (req: express.Request, res: express.Response) => {
-    let errorFunction = checkValidHeaders(req.headers);
-    if (errorFunction === undefined) 
-        services.newAccount(req.body, res);
+app.post('/new', async (req: express.Request, res: express.Response) => 
+    proceed(res, checkValidHeaders(req.headers), services.newAccount, req.body, res)
+)
+
+/**
+ * Saves lines for what might the most common operation 
+ * @param res express Response
+ * @param onErrorFuncton the returned operation to perform in case headers are not valid
+ * @param onSucessFunction the CRUD operation to run if validation succeeds
+ * @param params parameters for the onSucessFunction to run AND THE RESPONSE
+ */
+function proceed(res: express.Response, onErrorFuncton: Function | undefined, onSucessFunction: Function, ...params: any) {
+    if (onErrorFuncton === undefined)
+        onSucessFunction.apply(null, params);
     else 
-        errorFunction.apply(res);
-})
+        onErrorFuncton.apply(res)
+}
 
 /**
  * This is defined to reuse the same validation. Checks that the requiered headers are there and that they are
